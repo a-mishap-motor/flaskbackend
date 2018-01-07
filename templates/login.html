@@ -9,8 +9,7 @@
 	<title>VITCMUN: E-Chit System</title>
 	<link rel="stylesheet" href="{{ url_for('static', filename='assets/demo.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='assets/form-labels-on-top.css') }}">
-	<link rel="stylesheet" href="{{ url_for('static', filename='assets/scrollbar.css.css') }}">
-	<script src="https://maps.googleapis.com/maps/api/js?sensor=true&libraries=places&language=en"></script>
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/scrollbar.css') }}">
 
 
 </head>
@@ -21,8 +20,8 @@
     </header>
 	<br><Br>
     <div class="main-content">
-        <form class="form-labels-on-top" method="post"  id="form1">
-            <div class="form-title-row">
+        <form class="form-labels-on-top" method="post" action="index.html" id="form1">
+            <div class="form-title-row"></div>
                 <h1>Login</h1>
             </div>
             <div class="form-row">
@@ -31,8 +30,6 @@
                     <input type="text" name="username" id="username">
                 </label>
             </div>
-
-
 			<div class="form-row">
                 <label>
                     <span>Password</span>
