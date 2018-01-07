@@ -1,4 +1,14 @@
 $(document).ready(function () {
-    console.log("test");
+    $(".heading-compose").click(function() {
+        $(".side-two").css({
+          "left": "0"
+        });
+      });
+    
+      $(".newMessage-back").click(function() {
+        $(".side-two").css({
+          "left": "-100%"
+        });
+      });
    
 });
