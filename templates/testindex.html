@@ -158,8 +158,8 @@
        //ghar=(ghar).substr((ghar).indexOf('//')+)
        console.log("my ip:"+ ghar)
        contacts=[]
-       var socket=io.connect('http://0.0.0.0:5000/');
-       var sreg=io.connect('http://0.0.0.0:5000/reg')
+       var socket=io.connect(ghar);
+       var sreg=io.connect(ghar + 'reg')
        var us=getCookie('Loginwala')
        sreg.emit('regi',us)
        $('#deli').html(us.toUpperCase())
