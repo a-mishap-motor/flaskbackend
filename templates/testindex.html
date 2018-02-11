@@ -8,23 +8,34 @@
 </head>
 <body>
     <style>
-    option::selection,option::-moz-selection
+      option:checked
+      {
+        background-color: red;
+      }
+      option:hover
+      {
+        background-color: green;
+      }
+      option
+      {
+        background-color: #FFE289;
+      }
+    #sendto
     {
-       background-color: : #9ef442;
-    }
-    select option:checked
-    {
-      background-color: #9ef442;
+      position: absolute;
+      right:12%;
+      top:80%;
     }
     #messages
     {
       position:absolute;
-      right: 50%;
-      top:20%;
-      width:20%;
-      height:60%;
+      right: 15%;
+      top:8%;
+      width:70%;
+      height:80%;
       background-color:blue;
       word-wrap: break-word;
+      overflow-y: scroll;
     }
     #rec
     {
@@ -154,13 +165,13 @@
              }
            }
          });
-        /* $('#rec').on('click',function()
+         $('#rec').on('click',function()
          {
-           selected=String($('#rec').val())//(option:selected)
-           console.log('sel is:' +  typeof selected)
-         });*/
+           $('#sendto').html("Message To: " + String($('#rec').val()));
+           console.log(String($('#rec').val()))//(option:selected)
+          });
        socket.on('new_message',function(payload){
-         $("#messages").append('<div>' + payload['sender']+" : " + payload['message']+'</div>')
+         $("#messages").append('<div>' + payload['sender']+" :<br/> " + payload['message']+'</div>')
        });
 
         $('#sendb').click(function(){
@@ -180,6 +191,7 @@
     <div id="messages">
 
     </div>
+    <div id="sendto"></div>
     <!--<textarea id="myMessage"></textarea>-->
     <!--<input type="text" id="myMessage">-->
     <textarea row=5 col=10 id="myMessage"></textarea>
