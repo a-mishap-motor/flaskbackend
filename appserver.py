@@ -60,15 +60,17 @@ def hello():
 def registeruser(user):
     #print('User:' + msg + ' request:' + request.sid)
     usar[user]=request.sid
-    print("registered user:" + user +"with sid:" +usar[user])
+    print("registered user: " + user +" with sid:" +usar[user])
 
 @socketio.on('sendmess')
 def send(obj):
     recip=obj['rece']
-    sendsid=usar[obj['rece']]
+    sendsid=usar[recip]
     mess=obj['message']
-    print('User:' + recip + ' msg:' + mess + 'sid' + sendsid)
-    emit('new_message',mess,room=sendsid)
+    sender=obj['sender']
+    payload={'sender':sender,'message':mess}
+    print('Sender: '+sender +'  Receiver:  ' + recip + ' msg:' + mess + ' sid:' + sendsid)
+    emit('new_message',payload,room=sendsid)
 
 @socketio.on('GetOthers',namespace='/reg')
 def senduserlist(usur):

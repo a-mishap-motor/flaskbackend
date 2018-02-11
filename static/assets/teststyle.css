@@ -1,9 +1,8 @@
 #rec
 {
-  position: absolute;
-  right:50%;
+  position:absolute;
+  right:10%;
 }
-
 #myMessage
 {
   position:absolute;
@@ -12,12 +11,17 @@
   width:95%;
   height:10%;
   color:white;
-  background-color:black;
+  background-color: rgba(100,100,100);
   text-align:center;
+}
+#deli
+{
+  position:absolute;
+  right:50%;
+  top:10%;
 }
 #sendb
 {
-  color:white;
   position:absolute;
   background-color: #00d18e;
   right: 0.5%;
@@ -26,4 +30,9 @@
   height:70;
   width:70;
   border-radius: 50%;
+}
+
+#sendb:hover
+{
+      background-color:#e6e600;
 }
