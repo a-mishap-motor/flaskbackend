@@ -20,6 +20,32 @@
       {
         background-color: #FFE289;
       }
+      .left
+      {
+        background-color:#fc775f;
+        font-weight: bold;
+        display: inline-block;
+        position: relative;
+        padding: 2%;
+        color:white;
+        left:0;
+        border-radius: 10%;
+        overflow-x: hidden;
+        word-wrap: break-word;
+      }
+      .right
+      {
+        overflow-x: hidden;
+        padding: 2%;
+        font-weight: bold;
+        background-color:#5f72fc;
+        color:white;
+        position:relative;
+        display:inline-block;
+        border-radius: 10%;
+        left:90%;
+        word-wrap: break-word;
+      }
     #sendto
     {
       position: absolute;
@@ -33,7 +59,7 @@
       top:8%;
       width:70%;
       height:80%;
-      background-color:blue;
+      background-color:#c6c6c2;
       word-wrap: break-word;
       overflow-y: scroll;
     }
@@ -43,7 +69,7 @@
       right:0;
       width:10%;
       height:80%;
-      background-color: rgb(70, 70, 70);
+      background-color: rgb(170, 170, 170);
       color:white;
     }
     #myMessage
@@ -120,6 +146,7 @@
 }
      console.log("cookie that we found:" + getCookie('Loginwala'))
      currentusers=[]
+     var chatbuddy
      $(document).ready(function()
      {
        var selected
@@ -129,6 +156,7 @@
        console.log("first ghar:"+ ghar)
        //ghar=(ghar).substr((ghar).indexOf('//')+)
        console.log("my ip:"+ ghar)
+       contacts=[]
        var socket=io.connect('http://0.0.0.0:5000/');
        var sreg=io.connect('http://0.0.0.0:5000/reg')
        var us=getCookie('Loginwala')
@@ -162,24 +190,59 @@
              {
                currentusers.push(nam)
                $('#rec').append("<option value='" + nam + "'>" + nam +"</option>")
+               $("#messages").append('<div '+'id=sender_' + nam +' '+ '>'+ '</div>');
+               contacts.push(nam);
+               $(('#sender_' + nam)).hide()
              }
            }
          });
          $('#rec').on('click',function()
          {
+           //todo toggle to currently selected user..
+           if(chatbuddy=="")
+           {
+             chatbuddy='#sender_' + String($('#rec').val());
+           }
+           $((chatbuddy)).hide();
+           chatbuddy='#sender_' + String($('#rec').val());
+           $((chatbuddy)).show(200);
            $('#sendto').html("Message To: " + String($('#rec').val()));
            console.log(String($('#rec').val()))//(option:selected)
           });
        socket.on('new_message',function(payload){
-         $("#messages").append('<div>' + payload['sender']+" :<br/> " + payload['message']+'</div>')
+         if(contacts.indexOf(payload['sender'])==-1)
+         {
+            contacts.push(payload['sender'])
+            $("#messages").append(
+                  '<div '+'id=sender_' + payload['sender'] +'>'
+                  + '<div class="left">' + payload['sender'] + " :<br/> " + payload['message'] +'</div>'
+                  + '</div>'
+                );
+         }
+         else
+         {
+           $(('#sender_' + payload['sender'])).append('<div'+' '+'class=left' + '>' + payload['sender']+" :<br/> " + payload['message']+'</div><br/>')
+         }
        });
 
         $('#sendb').click(function(){
          console.log("button is pressed");
+         //todo create new kamra for sent to user,done
          if($('#myMessage').val() != "")
          {
+           rcvr=String($('#rec').val());
+           if(contacts.indexOf(rcvr)==-1)
+           {
+               $("#messages").append('<div '+'id=sender_' + rcvr +'>'
+                     + '<div class="right">' +'You:<br/>' + $('#myMessage').val()+"<br/>" +'</div><br/>'
+                +'</div>');
+           }
+           else
+           {
+             $(('#sender_' + rcvr)).append('<div class="right">' +'You:<br/>' + $('#myMessage').val()+"<br/>" +'</div><br/>')
+           }
            console.log('receiver is:' + $('#rec').val())
-           socket.emit('sendmess',{'rece':String($('#rec').val()),'message':$('#myMessage').val(),'sender':us});
+           socket.emit('sendmess',{'rece':rcvr,'message':$('#myMessage').val(),'sender':us});
            $('#myMessage').val('');
        }
        //socket.emit('roomc')
@@ -188,9 +251,7 @@
      });
     </script>
     <h3 id="deli"></h3>
-    <div id="messages">
-
-    </div>
+    <div id="messages"></div>
     <div id="sendto"></div>
     <!--<textarea id="myMessage"></textarea>-->
     <!--<input type="text" id="myMessage">-->
