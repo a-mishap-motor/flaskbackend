@@ -25,17 +25,17 @@
         background-color:#fc775f;
         font-weight: bold;
         display: inline-block;
-        position: relative;
+        position:relative;
         padding: 2%;
         color:white;
         left:0;
+        max-width: 50%;
         border-radius: 10%;
-        overflow-x: hidden;
         word-wrap: break-word;
       }
       .right
       {
-        overflow-x: hidden;
+        max-width: 50%;
         padding: 2%;
         font-weight: bold;
         background-color:#5f72fc;
@@ -43,7 +43,7 @@
         position:relative;
         display:inline-block;
         border-radius: 10%;
-        left:90%;
+        left:120%;
         word-wrap: break-word;
       }
     #sendto
@@ -62,6 +62,7 @@
       background-color:#c6c6c2;
       word-wrap: break-word;
       overflow-y: scroll;
+      overflow-x: scroll;
     }
     #rec
     {
@@ -190,7 +191,7 @@
              {
                currentusers.push(nam)
                $('#rec').append("<option value='" + nam + "'>" + nam +"</option>")
-               $("#messages").append('<div '+'id=sender_' + nam +' '+ '>'+ '</div>');
+               $("#messages").append('<div style="width:70%;" '+'id=sender_' + nam +' '+ '>'+ '</div>');
                contacts.push(nam);
                $(('#sender_' + nam)).hide()
              }
@@ -221,7 +222,7 @@
          }
          else
          {
-           $(('#sender_' + payload['sender'])).append('<div'+' '+'class=left' + '>' + payload['sender']+" :<br/> " + payload['message']+'</div><br/>')
+           $(('#sender_' + payload['sender'])).append('<div'+' '+'class=left' + '>' + payload['sender']+" :<br/> " + payload['message']+'</div><br/><br/>')
          }
        });
 
@@ -239,7 +240,7 @@
            }
            else
            {
-             $(('#sender_' + rcvr)).append('<div class="right">' +'You:<br/>' + $('#myMessage').val()+"<br/>" +'</div><br/>')
+             $(('#sender_' + rcvr)).append('<div class="right">' +'You:<br/>' + $('#myMessage').val()+"<br/>" +'</div><br/><br/>')
            }
            console.log('receiver is:' + $('#rec').val())
            socket.emit('sendmess',{'rece':rcvr,'message':$('#myMessage').val(),'sender':us});
