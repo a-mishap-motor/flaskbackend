@@ -10,40 +10,52 @@
     <style>
       option:checked
       {
-        background-color: red;
+        background-color: #f3435e;
       }
       option:hover
       {
-        background-color: green;
+        background-color:#ffa66d;
+        color:white;
       }
       option
       {
-        background-color: #FFE289;
+        background-color:  #43f37b;
+        border-bottom: 1% solid #fb7d2c;
+        font-weight: bold;
+        font-size: 125%;
       }
       .left
       {
+        height:auto;
         background-color:#fc775f;
         font-weight: bold;
         display: inline-block;
-        position:relative;
+        margin-left: 1%;
+        margin-right:1%;
+        margin-bottom: 300%;
+        position:absolute;
         padding: 2%;
         color:white;
         left:0;
-        max-width: 50%;
+        max-width: 40%;
         border-radius: 10%;
         word-wrap: break-word;
       }
       .right
       {
-        max-width: 50%;
+        height:auto;
+        margin-left: 1%;
+        margin-right:1%;
+        margin-bottom: 300%;
+        max-width: 40%;
         padding: 2%;
         font-weight: bold;
         background-color:#5f72fc;
         color:white;
-        position:relative;
+        position:absolute;
         display:inline-block;
         border-radius: 10%;
-        left:120%;
+        right:0;
         word-wrap: break-word;
       }
     #sendto
@@ -70,7 +82,7 @@
       right:0;
       width:10%;
       height:80%;
-      background-color: rgb(170, 170, 170);
+      background-color:#045457;
       color:white;
     }
     #myMessage
@@ -222,7 +234,13 @@
          }
          else
          {
-           $(('#sender_' + payload['sender'])).append('<div'+' '+'class=left' + '>' + payload['sender']+" :<br/> " + payload['message']+'</div><br/><br/>')
+           l=payload['sender'].length;
+           nlnr='<br/><br/>';
+           for(i=0;i<l/50;i++)
+           {
+             nlnr+='<br/>'
+           }
+           $(('#sender_' + payload['sender'])).append('<p'+' '+'class=left' + '>' + payload['sender']+" :<br/>" + payload['message']+'</p><br/><br/>' + nlnr)
          }
        });
 
@@ -235,12 +253,18 @@
            if(contacts.indexOf(rcvr)==-1)
            {
                $("#messages").append('<div '+'id=sender_' + rcvr +'>'
-                     + '<div class="right">' +'You:<br/>' + $('#myMessage').val()+"<br/>" +'</div><br/>'
+                     + '<div class="right" style="width:100%;background-color:red;">' +'You:<br/>' + $('#myMessage').val()+"<br/>" +'</div><br/>'
                 +'</div>');
            }
            else
            {
-             $(('#sender_' + rcvr)).append('<div class="right">' +'You:<br/>' + $('#myMessage').val()+"<br/>" +'</div><br/><br/>')
+             l=String($('#myMessage').val()).length;
+             nlnr='<br/><br/>';
+             for(i=0;i<l/50;i++)
+             {
+               nlnr+='<br/>'
+             }
+             $(('#sender_' + rcvr)).append('<p class="right">' +'You:<br/>' + String($('#myMessage').val()) +'</p><br/><br/>' + nlnr)
            }
            console.log('receiver is:' + $('#rec').val())
            socket.emit('sendmess',{'rece':rcvr,'message':$('#myMessage').val(),'sender':us});
