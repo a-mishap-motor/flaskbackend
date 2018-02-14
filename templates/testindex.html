@@ -28,7 +28,7 @@
       {
         height:auto;
         background-color:#fc775f;
-        font-weight: bold;
+        font-weight:bold;
         display: inline-block;
         margin-left: 1%;
         margin-right:1%;
@@ -222,26 +222,21 @@
            $('#sendto').html("Message To: " + String($('#rec').val()));
            console.log(String($('#rec').val()))//(option:selected)
           });
-       socket.on('new_message',function(payload){
+         socket.on('new_message',function(payload)
+         {
          if(contacts.indexOf(payload['sender'])==-1)
          {
             contacts.push(payload['sender'])
-            $("#messages").append(
-                  '<div '+'id=sender_' + payload['sender'] +'>'
-                  + '<div class="left">' + payload['sender'] + " :<br/> " + payload['message'] +'</div>'
-                  + '</div>'
-                );
+            //socket.emit('newroom',{'Sender':})
          }
-         else
-         {
            l=payload['sender'].length;
-           nlnr='<br/><br/>';
+           nlnr='<br/><br/><br/><br/><br/><br/>';
            for(i=0;i<l/50;i++)
            {
              nlnr+='<br/>'
            }
-           $(('#sender_' + payload['sender'])).append('<p'+' '+'class=left' + '>' + payload['sender']+" :<br/>" + payload['message']+'</p><br/><br/>' + nlnr)
-         }
+           $(('#sender_' + payload['sender'])).append('<p'+' '+'class=left' + '>' + "&nbsp;<span style='color:black;font-weight:lighter;font-size:70%;'>" + String(new Date()).substr(0,25) + '</span><br/>' + payload['sender'] +  ":<br/>" + payload['message']+'</p><br/><br/>' + nlnr)
+
        });
 
         $('#sendb').click(function(){
@@ -264,7 +259,7 @@
              {
                nlnr+='<br/>'
              }
-             $(('#sender_' + rcvr)).append('<p class="right">' +'You:<br/>' + String($('#myMessage').val()) +'</p><br/><br/>' + nlnr)
+             $(('#sender_' + rcvr)).append('<p class="right">' +"&nbsp;<span style='color:black;font-weight:lighter;font-size:70%;'>" + String(new Date()).substr(0,25) + '</span><br/>You:'+'<br/>' + String($('#myMessage').val()) +'</p><br/><br/>' + nlnr)
            }
            console.log('receiver is:' + $('#rec').val())
            socket.emit('sendmess',{'rece':rcvr,'message':$('#myMessage').val(),'sender':us});
@@ -285,7 +280,7 @@
     Send
     </button>
     <br/><br/>
-    <select id="rec" multiple="multiple">
+    <select id="rec" multiple>
     </select>
     <button type="button" id="logout">Log Out</button>
 </body>

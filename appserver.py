@@ -13,6 +13,8 @@ mysql=MySQL(app)
 socketio = SocketIO(app)
 usar={}
 lgcnt=0
+messlog={}
+messlogbefore={}
 @app.route('/',methods=['GET','POST'])
 def test():
      if request.method=="POST":
@@ -60,6 +62,7 @@ def hello():
 def registeruser(user):
     #print('User:' + msg + ' request:' + request.sid)
     usar[user]=request.sid
+    messlog[user]={}
     print("registered user: " + user +" with sid:" +usar[user])
 
 @socketio.on('sendmess')
