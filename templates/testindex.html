@@ -38,7 +38,7 @@
         color:white;
         left:0;
         max-width: 40%;
-        border-radius: 10%;
+        border-radius: 15% 5% 25% 0%;
         word-wrap: break-word;
       }
       .right
@@ -54,7 +54,7 @@
         color:white;
         position:absolute;
         display:inline-block;
-        border-radius: 10%;
+        border-radius: 5% 15% 0% 25%;
         right:0;
         word-wrap: break-word;
       }
@@ -71,6 +71,8 @@
       top:8%;
       width:70%;
       height:80%;
+      min-width: 70%;
+      margin:auto;
       background-color:#c6c6c2;
       word-wrap: break-word;
       overflow-y: scroll;
@@ -177,6 +179,7 @@
        $('#deli').html(us.toUpperCase())
        $('#logout').on('click',function(){
           //deleting the Cookie
+          socket.emit("savelog")
           document.cookie='Loginwala' + '=;expiresThu, 01 Jan 1970 00:00:01 GMT;';
           console.log('should be expired.. ' + getCookie('Loginwala'))
           //redirecting to home
@@ -188,23 +191,39 @@
          socket.send(us);
        });
         // suser=io.connect('http://192.168.43.37:5000/users')
+        sreg.emit('refchats',us)
+        sreg.on('prevchats',function(logi)
+        {
+            for(var i in logi)
+          {
+             currentusers.push(i)
+             //console.log(i + " " +logi[i])
+             $('#rec').append("<option value='" + i + "'>" + i +"</option>")
+             $("#messages").append('<div style="width:70%;" '+'id=sender_' + i +' '+ '>'+ '</div>');
+             $(('#sender_' + i)).hide()
+             //for(var j in logi[i])
+             //{
+               $(('#sender_' + i)).append(logi[i])
+             //}
+          }
+        });
          sreg.emit('GetOthers',us)
          sreg.on('GetUserList',function(payload)
          {
-           //console.log("printng other users here.. " + payload[0] + "," + payload[1])
-
-           //$('#rec').html("")
           for(i=0;i<payload['len'];i++)
            {
 
              console.log(payload['key'][i])
              nam=payload['key'][i]
+             if(contacts.indexOf(nam)==-1)
+             {
+               contacts.push(nam)
+             }
              if(currentusers.indexOf(nam)==-1)
              {
                currentusers.push(nam)
                $('#rec').append("<option value='" + nam + "'>" + nam +"</option>")
                $("#messages").append('<div style="width:70%;" '+'id=sender_' + nam +' '+ '>'+ '</div>');
-               contacts.push(nam);
                $(('#sender_' + nam)).hide()
              }
            }
@@ -229,15 +248,16 @@
             contacts.push(payload['sender'])
             //socket.emit('newroom',{'Sender':})
          }
-           l=payload['sender'].length;
-           nlnr='<br/><br/><br/><br/><br/><br/>';
-           for(i=0;i<l/50;i++)
+           l=payload['message'].length;
+           nlnr='<br/><br/><br>';
+           for(i=0;i<l/60;i++)
            {
              nlnr+='<br/>'
            }
-           $(('#sender_' + payload['sender'])).append('<p'+' '+'class=left' + '>' + "&nbsp;<span style='color:black;font-weight:lighter;font-size:70%;'>" + String(new Date()).substr(0,25) + '</span><br/>' + payload['sender'] +  ":<br/>" + payload['message']+'</p><br/><br/>' + nlnr)
-
-       });
+           message_rec='<p class=left' + '>' + "<span style='color:black;font-weight:lighter;font-size:70%;'>" + String(new Date()).substr(0,25) + '</span><br/>' + payload['sender'] +  ":<br/>" + payload['message']+'</p><br/><br/>' + nlnr
+           $(('#sender_' + payload['sender'])).append(message_rec)
+           //socket.emit('updatelog',{'rece':us,'message':message_rec,'sender':payload['sender']});
+         });
 
         $('#sendb').click(function(){
          console.log("button is pressed");
@@ -247,19 +267,24 @@
            rcvr=String($('#rec').val());
            if(contacts.indexOf(rcvr)==-1)
            {
-               $("#messages").append('<div '+'id=sender_' + rcvr +'>'
-                     + '<div class="right" style="width:100%;background-color:red;">' +'You:<br/>' + $('#myMessage').val()+"<br/>" +'</div><br/>'
-                +'</div>');
+               alert("Sorry,this User is not logged in now...");
            }
            else
            {
              l=String($('#myMessage').val()).length;
-             nlnr='<br/><br/>';
-             for(i=0;i<l/50;i++)
+             nlnr='<br/><br/><br/>';
+             for(i=0;i<l/60;i++)
              {
                nlnr+='<br/>'
              }
-             $(('#sender_' + rcvr)).append('<p class="right">' +"&nbsp;<span style='color:black;font-weight:lighter;font-size:70%;'>" + String(new Date()).substr(0,25) + '</span><br/>You:'+'<br/>' + String($('#myMessage').val()) +'</p><br/><br/>' + nlnr)
+             mess1="<span style='color:black;font-weight:lighter;font-size:70%;'>" + String(new Date()).substr(0,25) + '</span>';
+             mess2='<br/>You:'+'<br/>';
+             mess3=String($('#myMessage').val()) +'</p><br/><br/>' + nlnr
+             mess_sent='<p class="right">' +mess1 + mess2 + mess3;
+             mess_rec='<p class="left">'+ mess1 +'<br/>' + us +':<br/>' + mess3;
+             $(('#sender_' + rcvr)).append(mess_sent)
+             socket.emit('updatelog',{'rece':rcvr,'message':mess_sent,'sender':us});
+             socket.emit('updatelog',{'rece':us,'message':mess_rec,'sender':rcvr});
            }
            console.log('receiver is:' + $('#rec').val())
            socket.emit('sendmess',{'rece':rcvr,'message':$('#myMessage').val(),'sender':us});

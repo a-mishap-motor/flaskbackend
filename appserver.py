@@ -1,8 +1,9 @@
-from flask import Flask,render_template,request,session,redirect
+from flask import Flask,render_template,request,session,redirect,json,jsonify
 import os
 from flask_socketio import SocketIO,emit,send,join_room,leave_room
 from flask_mysqldb import MySQL
 from flask_session import Session
+import pickle
 app=Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 app.config['MYSQL_HOST'] = '127.0.0.1'
@@ -14,7 +15,14 @@ socketio = SocketIO(app)
 usar={}
 lgcnt=0
 messlog={}
-messlogbefore={}
+try:
+    with open('mess.pkl','rb') as f:
+        messlogbefore = pickle.load(f)
+        messlog=messlogbefore
+        print(messlog)
+except EOFError:
+    print('file is empty..')
+
 @app.route('/',methods=['GET','POST'])
 def test():
      if request.method=="POST":
@@ -62,8 +70,10 @@ def hello():
 def registeruser(user):
     #print('User:' + msg + ' request:' + request.sid)
     usar[user]=request.sid
-    messlog[user]={}
+    if user not in messlog.keys():
+        messlog[user]={}
     print("registered user: " + user +" with sid:" +usar[user])
+    #print(messlog)
 
 @socketio.on('sendmess')
 def send(obj):
@@ -75,6 +85,17 @@ def send(obj):
     print('Sender: '+sender +'  Receiver:  ' + recip + ' msg:' + mess + ' sid:' + sendsid)
     emit('new_message',payload,room=sendsid)
 
+@socketio.on('updatelog')
+def upd(obj):
+    recip=obj['rece']
+    mess=obj['message']
+    sender=obj['sender']
+    messlog[sender].setdefault(recip,[]).append(mess)
+
+@socketio.on('refchats',namespace='/reg')
+def retchats(us):
+    emit('prevchats',messlog[us],room=usar[us])
+
 @socketio.on('GetOthers',namespace='/reg')
 def senduserlist(usur):
     #print("Get others,registered user:" + usur +"with sid:" +request.sid)
@@ -82,6 +103,12 @@ def senduserlist(usur):
     l=len(key)
     payload={'key':key,'len':l}
     emit('GetUserList',payload,broadcast=True)
+
+@socketio.on('savelog')
+def saving():
+    with open('mess.pkl','wb') as f:
+        pickle.dump(messlog,f)
+    print("saving chat logs..")
 
 if __name__=="__main__":
     socketio.run(app, host='0.0.0.0', port=5000)
