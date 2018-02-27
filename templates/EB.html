@@ -62,6 +62,23 @@
         right:0;
         word-wrap: break-word;
       }
+      .beech
+      {
+        height:auto;
+        margin-left: 1%;
+        margin-right:1%;
+        margin-bottom: 300%;
+        max-width: 40%;
+        padding: 2%;
+        font-weight: bold;
+        background-color:#eeff56;
+        color:white;
+        position:absolute;
+        display:inline-block;
+        border-radius: 0%;
+        right:50%;
+        word-wrap: break-word;
+      }
     #sendto
     {
       position: absolute;
@@ -199,8 +216,11 @@
      console.log("cookie that we found:" + getCookie('Loginwala'))
      currentusers=[]
      var chatbuddy
+     contacts=[]
+     seechits=[]
      $(document).ready(function()
      {
+       $('#chitview').hide()
        var selected
        str=window.location.href
        console.log("str:" + str)
@@ -208,8 +228,6 @@
        console.log("first ghar:"+ ghar)
        //ghar=(ghar).substr((ghar).indexOf('//')+)
        console.log("my ip:"+ ghar)
-       ourchits=0
-       contacts=[]
        var socket=io.connect(ghar);
        var sreg=io.connect(ghar + 'reg')
        var us=getCookie('Loginwala')
@@ -245,15 +263,40 @@
              //}
           }
         });
+        $('#chits').on('click',function()
+        {
+          if($('#chitview').is(':visible'))
+          {
+          $('#chitview').hide();
+          $((chatbuddy)).show();
+          }
+          else
+          {
+            $((chatbuddy)).hide();
+            $('#chitview').show();
+          }
+        });
         socket.on('chits',function(chit)
         {
-          //for(var i in chit)
-          //{
-            ourchits+=1
-            ourchits.append()
+          $('#chitview').html("")
+          for(var i in chit)
+          {
+            //+=1
+            //seechits.append(chit[])
             console.log(chit[i])
+            mess1="<span style='color:black;font-weight:lighter;font-size:70%;'>" + String(new Date()).substr(0,25) + '</span>';
+            mess2='<br/>'+ chit[i][2] +'--->'+chit[i][0]+'<br/>';
+            l=String(chit[i][1]).length;
+            nlnr='<br/><br/><br/>';
+            for(j=0;j<l/60;j++)
+            {
+              nlnr+='<br/>'
+            }
+            mess3= chit[i][1]+'</p><br/><br/>' + nlnr
+            sentchit='<p class="beech">' + mess1 + mess2 + mess3;
+            $('#chitview').append(sentchit)
             //console.log(i['sender'] +'->' + i['rece'] +'message->'+i['message'])
-          //}
+          }
         });
          sreg.emit('GetOthers',us)
          sreg.on('GetUserList',function(payload)
@@ -344,8 +387,9 @@
      });
     </script>
     <h3 id="deli"></h3>
-    <div id="messages"></div>
+    <div id="messages">
     <div id=chitview></div>
+    </div>
     <button type="button" id="chits">View Chits</button>
     <div id="sendto"></div>
     <!--<textarea id="myMessage"></textarea>-->

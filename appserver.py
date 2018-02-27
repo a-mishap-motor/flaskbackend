@@ -21,6 +21,8 @@ try:
         messlogbefore = pickle.load(f)
         messlog=messlogbefore
         print(messlog)
+    with open('ebchits.pkl','rb') as y:
+        ebchits=pickle.load(y)
 except EOFError:
     print('file is empty..')
 
@@ -39,9 +41,9 @@ def test():
                  #return render_template('index.html')
              #else:
              if row[3] =='EB':
-                 return render_template('EB.html')
+                 return render_template('EBFinal.html')
              else:
-                 return render_template('testindex.html')
+                 return render_template('DelApps.html')
              #print("user logged in" + request.sid)
          else:
              #return render_template("")
@@ -74,6 +76,7 @@ def hello():
 def registeruser(user):
     #print('User:' + msg + ' request:' + request.sid)
     usar[user]=request.sid
+    emit('chits',ebchits,broadcast=True)
     if user not in messlog.keys():
         messlog[user]={}
     print("registered user: " + user +" with sid:" +usar[user])
@@ -112,6 +115,8 @@ def senduserlist(usur):
 def saving():
     with open('mess.pkl','wb') as f:
         pickle.dump(messlog,f)
+    with open('ebchits.pkl','wb') as y:
+        pickle.dump(ebchits,y)
     print("saving chat logs..")
 
 @socketio.on('ebchit')
