@@ -12,6 +12,7 @@ app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'munlogindb'
 mysql=MySQL(app)
 socketio = SocketIO(app)
+ebchits=[]
 usar={}
 lgcnt=0
 messlog={}
@@ -37,7 +38,10 @@ def test():
              #if user=="aditya":
                  #return render_template('index.html')
              #else:
-             return render_template('testindex.html')
+             if row[3] =='EB':
+                 return render_template('EB.html')
+             else:
+                 return render_template('testindex.html')
              #print("user logged in" + request.sid)
          else:
              #return render_template("")
@@ -109,6 +113,14 @@ def saving():
     with open('mess.pkl','wb') as f:
         pickle.dump(messlog,f)
     print("saving chat logs..")
+
+@socketio.on('ebchit')
+def chit(pay):
+    #ebchits.append({'rece':pay['rece'],'message':pay['message'],'sender':pay['sender']})
+    ebchits.append([pay['rece'],pay['message'],pay['sender']])
+    emit('chits',ebchits,broadcast=True)
+
+
 
 if __name__=="__main__":
     socketio.run(app, host='0.0.0.0', port=5000)
