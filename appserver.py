@@ -16,6 +16,7 @@ ebchits=[]
 usar={}
 lgcnt=0
 messlog={}
+#agar pehle se file bani na ho toh uske liye end of file exceotion daala...
 try:
     with open('mess.pkl','rb') as f:
         messlogbefore = pickle.load(f)
@@ -72,7 +73,7 @@ def showroomconnect():
 def hello():
     print('')#'User:' + 'msg' + ' request:' + request.sid)
 
-@socketio.on('regi',namespace="/reg")
+@socketio.on('regi',namespace="/reg") #user ko uski sid se register karo..
 def registeruser(user):
     #print('User:' + msg + ' request:' + request.sid)
     usar[user]=request.sid
@@ -82,7 +83,7 @@ def registeruser(user):
     print("registered user: " + user +" with sid:" +usar[user])
     #print(messlog)
 
-@socketio.on('sendmess')
+@socketio.on('sendmess')#message bhejo ek user se doosre ko
 def send(obj):
     recip=obj['rece']
     sendsid=usar[recip]
@@ -92,6 +93,8 @@ def send(obj):
     print('Sender: '+sender +'  Receiver:  ' + recip + ' msg:' + mess + ' sid:' + sendsid)
     emit('new_message',payload,room=sendsid)
 
+#messlog ek dictionary of dictionary of list hai...
+#agar messlog[sender][receiver] blank hai toh empty list declare karo otherwise...message append karo
 @socketio.on('updatelog')
 def upd(obj):
     recip=obj['rece']
@@ -99,10 +102,12 @@ def upd(obj):
     sender=obj['sender']
     messlog[sender].setdefault(recip,[]).append(mess)
 
+#ek user ke baaki saare users se jo chat huua wo emit karo
 @socketio.on('refchats',namespace='/reg')
 def retchats(us):
     emit('prevchats',messlog[us],room=usar[us])
 
+#userlist of connected usrs retur karo...
 @socketio.on('GetOthers',namespace='/reg')
 def senduserlist(usur):
     #print("Get others,registered user:" + usur +"with sid:" +request.sid)
@@ -111,6 +116,7 @@ def senduserlist(usur):
     payload={'key':key,'len':l}
     emit('GetUserList',payload,broadcast=True)
 
+#variables saare save ho ge file me...happens on logout...
 @socketio.on('savelog')
 def saving():
     with open('mess.pkl','wb') as f:
@@ -118,7 +124,7 @@ def saving():
     with open('ebchits.pkl','wb') as y:
         pickle.dump(ebchits,y)
     print("saving chat logs..")
-
+#eb ko via eb chits return pakradya..
 @socketio.on('ebchit')
 def chit(pay):
     #ebchits.append({'rece':pay['rece'],'message':pay['message'],'sender':pay['sender']})
@@ -126,6 +132,6 @@ def chit(pay):
     emit('chits',ebchits,broadcast=True)
 
 
-
+#yeh toh smaj jaao bhosdi waalo
 if __name__=="__main__":
     socketio.run(app, host='0.0.0.0', port=5000)

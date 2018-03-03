@@ -97,7 +97,10 @@
 
 </style>
 <script type="text/javascript">
-function getCookie(cname) {
+//ankur ka code...
+//ye function stored cookie ka value doondhne ke liye...
+function getCookie(cname)
+{
 var name = cname + "=";
 var decodedCookie = decodeURIComponent(document.cookie);
 var ca = decodedCookie.split(';');
@@ -114,9 +117,11 @@ return "";
 }
  console.log("cookie that we found:" + getCookie('Loginwala'))
  currentusers=[]
- var chatbuddy
+ var chatbuddy //jis bande se abhi baat kar rahe ho
+  //used to hide and show div of that chat div
  $(document).ready(function()
  {
+   //ghar wali bachodi apna current ip extract karti hai aur uusi ip se socket ko contact karti hai..
    var selected
    str=window.location.href
    console.log("str:" + str)
@@ -125,12 +130,12 @@ return "";
    //ghar=(ghar).substr((ghar).indexOf('//')+)
    console.log("my ip:"+ ghar)
    contacts=[]
-   var socket=io.connect(ghar);
+   var socket=io.connect(ghar);//<--ghar ka use kar ke socket connect huua
    var sreg=io.connect(ghar + 'reg')
-   var us=getCookie('Loginwala')
+   var us=getCookie('Loginwala')//us cookie me username stored hai
    sreg.emit('regi',us)
    $('#deli').html(us.toUpperCase())
-   $('#logout').on('click',function(){
+   $('#logout').on('click',function(){//logout hone pe server ko chatlog ka backup lene ko bolne k liye...
       //deleting the Cookie
       socket.emit("savelog")
       document.cookie='Loginwala' + '=;expiresThu, 01 Jan 1970 00:00:01 GMT;';
@@ -138,16 +143,17 @@ return "";
       //redirecting to home
       window.location.replace(str)
    });
+   //connect hone pe apna username bhejo taki vo server pe store ho...
    socket.on("connect",function()
    {
      //var us=getCookie('Loginwala'
      socket.send(us);
    });
     // suser=io.connect('http://192.168.43.37:5000/users')
-    sreg.emit('refchats',us)
-    sreg.on('prevchats',function(logi)
+    sreg.emit('refchats',us)//server ko bola pehle ki chats do...
+    sreg.on('prevchats',function(logi)//server pehle ki chats bheja
     {
-
+       //pehle ki chats jo user se chat huui  uske div me daala....
         for(var i in logi)
       {
          currentusers.push(i)
@@ -164,6 +170,8 @@ return "";
       }
     });
      sreg.emit('GetOthers',us)
+     //har login hone pe GetOthers emit hota hai jo ki global brodcast karta hai connected users ki list...
+     //global brodcast through GetUserList function..
      sreg.on('GetUserList',function(payload)
      {
       for(i=0;i<payload['len'];i++)
@@ -171,7 +179,7 @@ return "";
 
          console.log(payload['key'][i])
          nam=payload['key'][i]
-         if(contacts.indexOf(nam)==-1)
+         if(contacts.indexOf(nam)==-1) //agar uset nayaa aaya hai toh usko receivers me daalo
          {
            contacts.push(nam)
          }
@@ -184,7 +192,7 @@ return "";
          }
        }
      });
-     $('#rec').on('click',function()
+     $('#rec').on('click',function()//receive button ke click hone pe receiver select karo...
      {
        //todo toggle to currently selected user..
        if(chatbuddy=="")
@@ -197,7 +205,7 @@ return "";
        $('#sendto').html("Message To: " + String($('#rec').val()));
        console.log(String($('#rec').val()))//(option:selected)
       });
-     socket.on('new_message',function(payload)
+     socket.on('new_message',function(payload)//nayaa message aane pe uusko messages ke div me daalo
      {
      if(contacts.indexOf(payload['sender'])==-1)
      {
@@ -215,7 +223,7 @@ return "";
        //socket.emit('updatelog',{'rece':us,'message':message_rec,'sender':payload['sender']});
      });
 
-    $('#sendb').click(function(){
+    $('#sendb').click(function(){//send click hone pe message bhejo...
      console.log("button is pressed");
      //todo create new kamra for sent to user,done
      if($('#myMessage').val() != "")
@@ -301,7 +309,7 @@ return "";
     <div class="w3-col l8 m8 s8">
       <div class="w3-container">
         <div id="sendto"></div>
-        <textarea class="w3-input w3-border" id="myMessage"></textarea>
+        <textarea class="w3-input w3-border" id="myMessage" maxlength=300></textarea>
       </div>
     </div>
 

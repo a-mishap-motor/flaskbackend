@@ -5,9 +5,13 @@
 <!--<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>-->
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<!--<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+-->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/w3.css') }}">
+<script type="text/javascript" src="{{ url_for('static', filename='assets/socket.io.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/jquery.min.js') }}"></script>
 <body>
 
 <!-- This is the start of the script and th css-->
@@ -234,6 +238,7 @@ return "";
      $('#rec').on('click',function()
      {
        //todo toggle to currently selected user..
+       $('#chitview').hide();
        if(chatbuddy=="")
        {
          chatbuddy='#sender_' + String($('#rec').val());
